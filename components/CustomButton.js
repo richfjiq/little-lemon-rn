@@ -1,6 +1,15 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 
-const CustomButton = ({ text, onPress, variant }) => {
+const CustomButton = ({
+  text,
+  onPress,
+  variant,
+  width = 0,
+  marginLeft = 0,
+  marginRight = 0,
+  marginTop = 0,
+  marginBottom = 0,
+}) => {
   let buttonStyle = styles.containerYellow;
   let buttonText = styles.blackText;
 
@@ -19,9 +28,17 @@ const CustomButton = ({ text, onPress, variant }) => {
       break;
   }
   return (
-    <View style={buttonStyle}>
+    <Pressable
+      style={({ pressed }) => [
+        buttonStyle,
+        width !== 0 ? { width } : {},
+        { marginBottom, marginTop, marginLeft, marginRight },
+        { opacity: pressed ? 0.5 : 1 },
+      ]}
+      onPress={onPress}
+    >
       <Text style={buttonText}>{text}</Text>
-    </View>
+    </Pressable>
   );
 };
 
@@ -32,21 +49,21 @@ const styles = StyleSheet.create({
     height: 42,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: '#F4CE14',
   },
   containerGreen: {
     height: 42,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: '#495E57',
   },
   containerOutline: {
     height: 42,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#495E57',

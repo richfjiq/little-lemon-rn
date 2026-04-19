@@ -24,6 +24,7 @@ const HeaderScreen = ({
               { opacity: pressed ? 0.5 : 1 },
             ]}
             hitSlop={20}
+            onPress={onBack}
           >
             <Ionicons name="arrow-back-circle" size={38} color="#495E57" />
           </Pressable>

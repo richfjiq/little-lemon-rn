@@ -10,14 +10,16 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import CustomTextInput from '../components/CustomTextInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-const Onboarding = () => {
+const Onboarding = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isValidEmail, setIsValidEmail] = useState(false);
-  console.log('(regex.test(email) ----', regex.test(email));
+
   const isDisabled = useCallback(() => {
     if (name.length === 0 || !isValidEmail || email.length === 0) {
       return true;
@@ -25,7 +27,20 @@ const Onboarding = () => {
       return false;
     }
   }, [email, name, isValidEmail]);
-  console.log('isDisabled +++++', isDisabled());
+
+  const onSubmit = async () => {
+    try {
+      await AsyncStorage.multiSet([
+        ['@Name', name],
+        ['@Email', email],
+      ]);
+      navigation.navigate('Profile');
+      setEmail('');
+      setName('');
+    } catch (error) {
+      console.log();
+    }
+  };
 
   useEffect(() => {
     setIsValidEmail(regex.test(email));
@@ -40,20 +55,18 @@ const Onboarding = () => {
         >
           <Text style={styles.title}>Let us get to know ypu</Text>
           <View>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              style={styles.input}
+            <CustomTextInput
               value={name}
               onChangeText={setName}
+              label="First Name"
+              marginBottom={24}
             />
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={[
-                styles.input,
-                email.length > 0 && !isValidEmail ? styles.inputError : {},
-              ]}
+            <CustomTextInput
               value={email}
               onChangeText={setEmail}
+              error={email.length > 0 && !isValidEmail}
+              label="Email"
+              keyboardType="email-address"
             />
           </View>
           <View style={styles.buttonWrapper}>
@@ -63,6 +76,7 @@ const Onboarding = () => {
                 { opacity: pressed ? 0.5 : 1 },
               ]}
               disabled={isDisabled()}
+              onPress={onSubmit}
             >
               <Text style={styles.btnText}>Next</Text>
             </Pressable>

@@ -7,7 +7,10 @@ const Stack = createNativeStackNavigator();
 
 export const AppStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Profile">
+    <Stack.Navigator
+      initialRouteName="Onboarding"
+      screenOptions={{ contentStyle: { backgroundColor: 'white' } }}
+    >
       <Stack.Screen
         options={{
           header: () => <HeaderScreen logo />,
@@ -20,14 +23,7 @@ export const AppStack = () => {
         component={Profile}
         options={({ navigation }) => ({
           header: () => (
-            <HeaderScreen
-              logo
-              avatar
-              backButton
-              onBack={() => {
-                navigation.goBack();
-              }}
-            />
+            <HeaderScreen logo avatar backButton onBack={navigation.goBack} />
           ),
         })}
       />
