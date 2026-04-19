@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { images } from '../assets';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
 
 const HeaderScreen = ({
   logo = false,
@@ -13,6 +14,11 @@ const HeaderScreen = ({
   onBack = () => {},
 }) => {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
+  const goToProfile = () => {
+    navigation.navigate('Profile');
+  };
 
   return (
     <View style={{ paddingTop: insets.top }}>
@@ -31,9 +37,15 @@ const HeaderScreen = ({
         )}
         {logo && <Image source={images.headerLogo} />}
         {avatar && (
-          <View style={styles.avatar}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.avatar,
+              { opacity: pressed ? 0.5 : 1 },
+            ]}
+            onPress={goToProfile}
+          >
             <FontAwesome5 name="user-circle" size={32} color="#333333" />
-          </View>
+          </Pressable>
         )}
       </View>
     </View>
