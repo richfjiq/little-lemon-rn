@@ -1,39 +1,58 @@
-import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
-import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  FlatList,
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { images } from '../assets';
 import CustomTextInput from '../components/CustomTextInput';
+import ListItem from '../components/ListItem';
+import MenuListHeader from '../components/MenuListHeader';
 
 const Home = () => {
   const [searchString, setSearchString] = useState('');
   const [openInput, setOpenInput] = useState(false);
+  const [menu, setMenu] = useState([]);
+  console.log(JSON.stringify(menu, null, 2));
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json',
+      );
+      const parsedData = await res.json();
+      setMenu(parsedData.menu);
+    } catch (error) {
+      console.log('+++++ fetchData error +++++', error);
+    }
+  };
+
+  const renderItem = ({ item }) => {
+    console.log(item);
+    return <ListItem item={item} />;
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
-    <View style={styles.containers}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Little Lemon</Text>
-        <View style={styles.heroContainer}>
-          <View style={styles.heroTextContainer}>
-            <Text style={styles.subHeader}>Chicago</Text>
-            <Text style={styles.regularText}>
-              We are a family owned Mediterranean restaurant, focused on
-              traditional recipes served with a modern twist.
-            </Text>
-          </View>
-          <View style={styles.heroImageContainer}>
-            <Image source={images.homeHero} style={styles.heroImage} />
-          </View>
-        </View>
-        <CustomTextInput
-          value={searchString}
-          onChangeText={setSearchString}
-          marginTop={12}
-          search
+    <FlatList
+      keyExtractor={(item) => `${item.name}`}
+      data={menu}
+      renderItem={renderItem}
+      ListHeaderComponent={() => (
+        <MenuListHeader
+          searchString={searchString}
+          setSearchString={setSearchString}
           openInput={openInput}
-          setInputOpen={setOpenInput}
-          placeholder="Search"
+          setOpenInput={setOpenInput}
         />
-      </View>
-    </View>
+      )}
+      ListFooterComponent={() => <View style={styles.footer} />}
+    />
   );
 };
 
@@ -78,5 +97,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     marginTop: 12,
+  },
+  categoriesContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(51,51,51,0.2)',
+  },
+  title: {
+    fontFamily: 'MarkaziText-Regular',
+    fontSize: 26,
+    color: '#333333',
+    fontWeight: '600',
+  },
+  categoriesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  categoryButton: {
+    backgroundColor: '#EDEFEE',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryText: {
+    fontFamily: 'MarkaziText-Regular',
+    fontSize: 14,
+    color: '#495E57',
+    fontWeight: '600',
+  },
+  footer: {
+    height: 48,
   },
 });
