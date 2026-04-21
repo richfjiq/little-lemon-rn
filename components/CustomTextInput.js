@@ -77,8 +77,8 @@ const CustomTextInput = ({
           style={[
             styles.searchInputWrapper,
             {
-              width: isFocus ? '100%' : 48,
-              paddingHorizontal: isFocus ? 50 : 0,
+              width: isFocus ? '100%' : value.length === 0 ? 48 : '100%',
+              paddingHorizontal: isFocus ? 50 : value.length === 0 ? 0 : 50,
               transitionProperty: ['width', 'paddingHorizontal'],
               transitionDuration: [300, 300],
             },
