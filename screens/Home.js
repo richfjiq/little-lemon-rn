@@ -17,9 +17,11 @@ import {
   getMenuItems,
   saveMenuItems,
 } from '../utils/database';
+import { useDebounce } from '../hooks/useDebounce';
 
 const Home = () => {
   const [searchString, setSearchString] = useState('');
+  const debouncedValue = useDebounce(searchString, 500);
   const [openInput, setOpenInput] = useState(false);
   const [menu, setMenu] = useState([]);
   const [activeCategory, setActiveCategory] = useState({
@@ -90,7 +92,7 @@ const Home = () => {
           (key) => activeCategory[key],
         );
         const menuitems = await filterByQueryAndCategories(
-          searchString,
+          debouncedValue,
           categories,
         );
         console.log('+++++++++++++++++', menuitems);
@@ -101,7 +103,7 @@ const Home = () => {
         Alert.alert(e.message);
       }
     })();
-  }, [activeCategory, searchString]);
+  }, [activeCategory, debouncedValue]);
 
   return (
     <FlatList
