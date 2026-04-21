@@ -47,3 +47,24 @@ export function saveMenuItems(menuitems) {
     statement.finalizeSync();
   }
 }
+
+export async function filterByQueryAndCategories(query, categories) {
+  try {
+    let sql = `SELECT * FROM menuitems WHERE name LIKE ?`;
+    const params = [`%${query}%`];
+
+    if (categories.length > 0) {
+      sql += ' AND category IN (';
+      sql += categories.map(() => '?').join(',');
+      sql += ')';
+      params.push(...categories);
+    }
+
+    const allRows = db.getAllSync(sql, params);
+    return allRows;
+  } catch (error) {
+    console.log('error +++++', error);
+    // Handle error
+    Alert.alert(e.message);
+  }
+}

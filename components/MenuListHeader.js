@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import React, { memo } from 'react';
 import CustomTextInput from './CustomTextInput';
 import { images } from '../assets';
@@ -8,6 +8,8 @@ const MenuListHeader = ({
   setSearchString,
   openInput,
   setOpenInput,
+  onCategoryPress,
+  activeCategory,
 }) => {
   return (
     <View>
@@ -38,18 +40,63 @@ const MenuListHeader = ({
       <View style={styles.categoriesContainer}>
         <Text style={styles.title}>ORDER FOR DELIVERY</Text>
         <View style={styles.categoriesRow}>
-          <View style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Starters</Text>
-          </View>
-          <View style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Mains</Text>
-          </View>
-          <View style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Desserts</Text>
-          </View>
-          <View style={styles.categoryButton}>
-            <Text style={styles.categoryText}>Drinks</Text>
-          </View>
+          <Pressable
+            onPress={() => onCategoryPress('starters')}
+            style={({ pressed }) => [
+              activeCategory.starters
+                ? styles.categoryButtonActive
+                : styles.categoryButton,
+              { opacity: pressed ? 0.5 : 1 },
+            ]}
+          >
+            <Text
+              style={
+                activeCategory.starters
+                  ? styles.categoryTextActive
+                  : styles.categoryText
+              }
+            >
+              Starters
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => onCategoryPress('mains')}
+            style={({ pressed }) => [
+              activeCategory.mains
+                ? styles.categoryButtonActive
+                : styles.categoryButton,
+              { opacity: pressed ? 0.5 : 1 },
+            ]}
+          >
+            <Text
+              style={
+                activeCategory.mains
+                  ? styles.categoryTextActive
+                  : styles.categoryText
+              }
+            >
+              Mains
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => onCategoryPress('desserts')}
+            style={({ pressed }) => [
+              activeCategory.desserts
+                ? styles.categoryButtonActive
+                : styles.categoryButton,
+              { opacity: pressed ? 0.5 : 1 },
+            ]}
+          >
+            <Text
+              style={
+                activeCategory.desserts
+                  ? styles.categoryTextActive
+                  : styles.categoryText
+              }
+            >
+              Desserts
+            </Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -124,10 +171,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  categoryButtonActive: {
+    backgroundColor: '#495E57',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   categoryText: {
     fontFamily: 'MarkaziText-Regular',
     fontSize: 14,
     color: '#495E57',
+    fontWeight: '600',
+  },
+  categoryTextActive: {
+    fontFamily: 'MarkaziText-Regular',
+    fontSize: 14,
+    color: 'white',
     fontWeight: '600',
   },
 });

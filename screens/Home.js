@@ -11,20 +11,36 @@ import { images } from '../assets';
 import CustomTextInput from '../components/CustomTextInput';
 import MenuListItem from '../components/MenuListItem';
 import MenuListHeader from '../components/MenuListHeader';
-import { createTable, getMenuItems, saveMenuItems } from '../utils/database';
+import {
+  createTable,
+  filterByQueryAndCategories,
+  getMenuItems,
+  saveMenuItems,
+} from '../utils/database';
 
 const Home = () => {
   const [searchString, setSearchString] = useState('');
   const [openInput, setOpenInput] = useState(false);
   const [menu, setMenu] = useState([]);
-  console.log(JSON.stringify(menu, null, 2));
+  const [activeCategory, setActiveCategory] = useState({
+    starters: false,
+    mains: false,
+    desserts: false,
+  });
+  console.log('activeCategory ++++++', activeCategory);
+  const onCategoryPress = (category) => {
+    setActiveCategory((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
   const fetchData = async () => {
     try {
       const res = await fetch(
         'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json',
       );
       const parsedData = await res.json();
-      console.log(parsedData);
       return parsedData.menu;
     } catch (error) {
       console.log('+++++ fetchData error +++++', error);
@@ -32,7 +48,6 @@ const Home = () => {
   };
 
   const renderItem = ({ item }) => {
-    console.log(item);
     return <MenuListItem item={item} />;
   };
 
@@ -43,9 +58,11 @@ const Home = () => {
         setSearchString={setSearchString}
         openInput={openInput}
         setOpenInput={setOpenInput}
+        onCategoryPress={onCategoryPress}
+        activeCategory={activeCategory}
       />
     ),
-    [searchString, openInput],
+    [searchString, openInput, activeCategory],
   );
 
   useEffect(() => {
@@ -65,6 +82,26 @@ const Home = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const categories = Object.keys(activeCategory).filter(
+          (key) => activeCategory[key],
+        );
+        const menuitems = await filterByQueryAndCategories(
+          searchString,
+          categories,
+        );
+        console.log('+++++++++++++++++', menuitems);
+        setMenu(menuitems);
+      } catch (error) {
+        console.log('error +++++', error);
+        // Handle error
+        Alert.alert(e.message);
+      }
+    })();
+  }, [activeCategory, searchString]);
 
   return (
     <FlatList
