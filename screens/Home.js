@@ -6,11 +6,12 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { images } from '../assets';
 import CustomTextInput from '../components/CustomTextInput';
-import ListItem from '../components/ListItem';
+import MenuListItem from '../components/MenuListItem';
 import MenuListHeader from '../components/MenuListHeader';
+import { createTable, getMenuItems, saveMenuItems } from '../utils/database';
 
 const Home = () => {
   const [searchString, setSearchString] = useState('');
@@ -23,7 +24,8 @@ const Home = () => {
         'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json',
       );
       const parsedData = await res.json();
-      setMenu(parsedData.menu);
+      console.log(parsedData);
+      return parsedData.menu;
     } catch (error) {
       console.log('+++++ fetchData error +++++', error);
     }
@@ -31,11 +33,37 @@ const Home = () => {
 
   const renderItem = ({ item }) => {
     console.log(item);
-    return <ListItem item={item} />;
+    return <MenuListItem item={item} />;
   };
 
+  const headerList = useMemo(
+    () => (
+      <MenuListHeader
+        searchString={searchString}
+        setSearchString={setSearchString}
+        openInput={openInput}
+        setOpenInput={setOpenInput}
+      />
+    ),
+    [searchString, openInput],
+  );
+
   useEffect(() => {
-    fetchData();
+    (async () => {
+      try {
+        await createTable();
+        let menuitems = await getMenuItems();
+        if (menuitems.length === 0) {
+          menuitems = await fetchData();
+          saveMenuItems(menuitems);
+        }
+        setMenu(menuitems);
+      } catch (error) {
+        console.log('error +++++', error);
+        // Handle error
+        Alert.alert(e.message);
+      }
+    })();
   }, []);
 
   return (
@@ -43,14 +71,7 @@ const Home = () => {
       keyExtractor={(item) => `${item.name}`}
       data={menu}
       renderItem={renderItem}
-      ListHeaderComponent={() => (
-        <MenuListHeader
-          searchString={searchString}
-          setSearchString={setSearchString}
-          openInput={openInput}
-          setOpenInput={setOpenInput}
-        />
-      )}
+      ListHeaderComponent={headerList}
       ListFooterComponent={() => <View style={styles.footer} />}
     />
   );

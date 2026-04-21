@@ -21,7 +21,8 @@
             "./assets/fonts/MarkaziText-Regular.ttf"
           ]
         }
-      ]
+      ],
+      "expo-sqlite"
     ]
   }
 }

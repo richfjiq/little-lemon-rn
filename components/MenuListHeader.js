@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
-import React from 'react';
+import React, { memo } from 'react';
 import CustomTextInput from './CustomTextInput';
 import { images } from '../assets';
 
@@ -56,7 +56,7 @@ const MenuListHeader = ({
   );
 };
 
-export default MenuListHeader;
+export default memo(MenuListHeader);
 
 const styles = StyleSheet.create({
   container: {
